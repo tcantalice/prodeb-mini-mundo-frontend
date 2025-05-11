@@ -11,7 +11,8 @@
         <div
           v-for="projeto in projetos"
           :key="projeto.id"
-          class="bg-white rounded-xl shadow p-4 border border-gray-200 hover:shadow-md transition"
+          @click="irParaDetalhes(projeto.id)"
+          class="cursor-pointer bg-white rounded-xl shadow p-4 border border-gray-200 hover:shadow-md transition"
         >
           <h2 class="text-lg font-semibold text-indigo-600">{{ projeto.nome }}</h2>
           <p class="text-sm text-gray-700">Criado por: <span class="font-medium">{{ projeto.criadoPor }}</span></p>
@@ -22,13 +23,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue';
 
 import api from '@/connectors/api';
 import Projeto from '@/models/projeto';
 
-const projetos = ref([]);
+const router = useRouter();
+
+const projetos = ref<Projeto[]>([]);
 const carregando = ref(true);
 const erro = ref(false);
 
@@ -41,7 +45,7 @@ const carregarProjetos = async () => {
       return;
     }
 
-    projetos.value = data.map((projeto, index) => new Projeto(
+    projetos.value = data.map((projeto: any, index: number) => new Projeto(
         projeto.id,
         projeto.nome,
         null,
@@ -58,8 +62,14 @@ const carregarProjetos = async () => {
   }
 }
 
-const formatarData = (dataISO) => {
-  const data = new Date(dataISO)
+
+const irParaDetalhes = (id: string) => {
+  router.push({ name: 'visualizar-projeto', params: { id } })
+}
+
+const formatarData = (dataISO: string | Date) => {
+  const data = new Date(dataISO);
+
   return data.toLocaleDateString('pt-BR', {
     year: 'numeric',
     month: 'long',
