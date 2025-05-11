@@ -5,10 +5,16 @@ const router = createRouter({
   routes: [
     {
       path: '/projetos',
-      name: 'projetos',
+      name: 'listar-projetos',
       component: () => import('../views/ListarProjetosView.vue'),
+    },
+    {
+      path: '/projetos/:id',
+      name: 'visualizar-projeto',
+      component: () => import('../views/ProjetoView.vue'),
+      props: true,
     }
   ],
-})
+});
 
 export default router
