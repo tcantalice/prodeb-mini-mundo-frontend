@@ -1,6 +1,14 @@
 <template>
   <div class="p-6">
-    <h1 class="text-2xl font-bold mb-4">Lista de Projetos</h1>
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Lista de Projetos</h1>
+      <button
+        class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+        @click="router.push('/projetos/novo')"
+      >
+        Novo Projeto
+      </button>
+    </div>
 
     <div v-if="carregando" class="text-gray-500">Carregando...</div>
     <div v-else-if="erro" class="text-red-500">Erro ao carregar projetos.</div>
