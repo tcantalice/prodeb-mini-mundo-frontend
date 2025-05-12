@@ -36,7 +36,7 @@ import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue';
 
 import api from '@/connectors/api';
-import Projeto from '@/models/projeto';
+import type Projeto from '@/models/projeto';
 
 const router = useRouter();
 
@@ -53,14 +53,15 @@ const carregarProjetos = async () => {
       return;
     }
 
-    projetos.value = data.map((projeto: any, index: number) => new Projeto(
-        projeto.id,
-        projeto.nome,
-        null,
-        null,
-        new Date(projeto.criado_em),
-        projeto.criado_por.nome
-      ));
+    projetos.value = data.map((projeto: any, index: number) => ({
+      id: projeto.id,
+      nome: projeto.nome,
+      descricao: projeto.descricao || null,
+      orcamento: projeto.orcamento !== null ? Number(projeto.orcamento) : null,
+      ativo: projeto.ativo !== undefined ? projeto.ativo : true,
+      criadoEm: new Date(projeto.criado_em),
+      criadoPor: projeto.criado_por.nome
+    } as Projeto));
 
   } catch (e) {
     console.error('Erro ao carregar projetos:', e);
