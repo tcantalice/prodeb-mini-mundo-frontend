@@ -15,9 +15,9 @@ RUN apk add --no-cache gettext
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copia entrypoint e dá permissão
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY entrypoint /entrypoint
+RUN chmod +x /entrypoint
 
 # Substitui entrypoint padrão
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT /entrypoint
 CMD ["nginx", "-g", "daemon off;"]
