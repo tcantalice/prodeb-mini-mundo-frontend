@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, type HistoryState } from 'vue-router';
 import api from '@/connectors/api';
 import type Projeto from '@/models/projeto';
 
@@ -37,6 +37,14 @@ const formatarData = (dataISO: Date | string) => {
   return data.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
+const projetoHistoryState = {
+  id: projeto.value!.id,
+  nome: projeto.value!.nome,
+  descricao: projeto.value!.descricao,
+  ativo: projeto.value!.ativo,
+  orcamento: projeto.value!.orcamento,
+} as HistoryState;
+
 onMounted(carregarProjeto)
 </script>
 
@@ -51,7 +59,7 @@ onMounted(carregarProjeto)
         <h2 class="text-xl font-semibold text-indigo-700">{{ projeto.nome }}</h2>
         <button
           class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
-          @click="router.push({ name: 'editar-projeto', params: { id: projeto.id }, state: { projeto } })"
+          @click="router.push({ name: 'editar-projeto', params: { id: projeto.id }, state: { projeto: projetoHistoryState } })"
         >Editar</button>
       </div>
       <p class="text-gray-800">
