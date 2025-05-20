@@ -20,4 +20,3 @@ RUN chmod +x /entrypoint
 
 # Substitui entrypoint padrão
 ENTRYPOINT /entrypoint
-CMD ["nginx", "-g", "daemon off;"]

@@ -2,6 +2,4 @@
 
 envsubst < /usr/share/nginx/html/env-config.template.js > /usr/share/nginx/html/env-config.js
 
-cat /usr/share/nginx/html/env-config.js
-
-exec "$@"
+nginx -g "daemon off;"
