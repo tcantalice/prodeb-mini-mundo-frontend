@@ -11,6 +11,11 @@ export interface ProjetoViewModel {
   descricao: string | null;
   orcamento: number | null;
   ativo: boolean;
+  criadoEm: string;
+  criadoPor: {
+    id: string;
+    nome: string;
+  };
 }
 
 export default interface GerenciamentoProjetoView {

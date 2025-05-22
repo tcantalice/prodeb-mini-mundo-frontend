@@ -22,7 +22,12 @@ export default class GerenciamentoProjetoPresenter {
           nome: projeto.nome,
           descricao: projeto.descricao,
           ativo: projeto.ativo,
-          orcamento: projeto.orcamento
+          orcamento: projeto.orcamento,
+          criadoEm: (new Date(projeto.criado_em)).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }),
+          criadoPor: {
+            id: projeto.criado_por.id,
+            nome: projeto.criado_por.nome
+          }
         });
       } else {
         this.view.showError('Não foi possível obter os dados do projeto!');
