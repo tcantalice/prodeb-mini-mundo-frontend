@@ -1,56 +1,22 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter, type HistoryState } from 'vue-router';
-import api from '@/connectors/api';
-import type Projeto from '@/models/projeto';
+import GerenciamentoProjetoPresenter from '@/presenters/GerenciamentoProjetoPresenter';
+import ListagemTarefaPresenter from '@/presenters/ListagemTarefaPresenter';
+import type { ProjetoViewModel } from '@/presenters/interfaces/GerenciamentoProjetoView';
+import type { TarefaViewModel } from '@/presenters/interfaces/ListagemTarefasView';
 
 const route = useRoute();
 const router = useRouter();
-const projeto = ref<Projeto | null>(null);
-const carregando = ref(true);
+
+const loadingProjeto = ref<boolean>(false);
+const loadingTarefas = ref<boolean>(false);
+const carregando = ref(loadingProjeto || loadingTarefas);
 const erro = ref(false);
 
-const tarefas = ref<Array<{ id: string, descricao: string, status: string, criadoEm: string }>>([
-  {
-    id: '1289412412',
-    descricao: 'Implementar cadastro de atividade',
-    status: 'pendente',
-    criadoEm: '20/05/2025'
-  },
-  {
-    id: '1289412413',
-    descricao: 'Implementar edição de atividade',
-    status: 'em-andamento',
-    criadoEm: '20/05/2025'
-  }
-]);
+const projeto = ref<ProjetoViewModel | null>(null);
+const tarefas = ref<Array<TarefaViewModel>>([]);
 
-const carregarProjeto = async () => {
-  try {
-    const { data: { data } } = await api.get(`/projetos/${route.params.id}`);
-
-    projeto.value = {
-      id: data.id,
-      nome: data.nome,
-      descricao: data.descricao || null,
-      orcamento: data.orcamento !== null ? Number(data.orcamento) : null,
-      ativo: data.ativo,
-      criadoEm: new Date(data.criado_em),
-      criadoPor: data.criado_por.nome
-    } as Projeto;
-
-  } catch (e) {
-    console.error('Erro ao carregar projeto:', e);
-    erro.value = true
-  } finally {
-    carregando.value = false
-  }
-}
-
-const formatarData = (dataISO: Date | string) => {
-  const data = new Date(dataISO);
-  return data.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })
-}
 
 const resolveStatusStyle = (status: string) => {
   return ({
@@ -60,7 +26,27 @@ const resolveStatusStyle = (status: string) => {
   })[status];
 }
 
-onMounted(carregarProjeto)
+const gerenciamentoProjetoPresenter = new GerenciamentoProjetoPresenter({
+  showSuccess: (message: string) => {},
+  showError: (message: string) => {},
+  showWarning: (message: string) => {},
+  disableLoading: () => loadingProjeto.value = false,
+  enableLoading: () => loadingProjeto.value = true,
+  fillFields: (projetoModel: ProjetoViewModel) => projeto.value = projetoModel,
+  showFieldError: (field: string, message: string) => {}
+});
+
+const listagemTarefaPresenter = new ListagemTarefaPresenter({
+  disableLoading: () => loadingTarefas.value = false,
+  enableLoading: () => loadingTarefas.value = true,
+  setTarefasList: (list: TarefaViewModel[]) => tarefas.value = list,
+  showError: (message: string) => erro.value = true,
+});
+
+onMounted(() => {
+  gerenciamentoProjetoPresenter.onLoad(route.params.id as string),
+  listagemTarefaPresenter.onLoad(route.params.id as string)
+});
 </script>
 
 <template>
@@ -92,10 +78,10 @@ onMounted(carregarProjeto)
         <span>{{ projeto.orcamento ? `R$ ${projeto.orcamento.toLocaleString('pt-BR')}` : 'Não informado' }}</span>
       </p>
       <p class="text-gray-700">
-        <span class="font-medium">Criado por: </span> {{ projeto.criadoPor }}
+        <span class="font-medium">Criado por: </span> {{ projeto.criadoPor.nome }}
       </p>
       <p class="text-gray-600">
-        <span class="font-medium">Data de criação: </span> {{ formatarData(projeto.criadoEm) }}
+        <span class="font-medium">Data de criação: </span> {{ projeto.criadoEm }}
       </p>
     </section>
     <section id="tasks-container" class="mt-10 shadow">
