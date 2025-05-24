@@ -5,6 +5,7 @@ import ItemListaTarefa from './ItemListaTarefa.vue';
 import { onMounted, ref } from 'vue';
 import type { TarefaViewModel } from '@/presenters/interfaces/ListagemTarefasView';
 import type ListagemTarefasView from '@/presenters/interfaces/ListagemTarefasView';
+import FooterListaTarefa from './FooterListaTarefa.vue';
 
 const props = defineProps<{ presenter: ListagemTarefaPresenter }>();
 const presenter: ListagemTarefaPresenter = props.presenter;
@@ -25,7 +26,6 @@ const listaTarefaView: ListagemTarefasView = {
       });
     });
   },
-  showError: (message: string) => {}
 };
 
 presenter.setView(listaTarefaView);
@@ -39,8 +39,9 @@ onMounted(async () => {
 <template>
   <section>
     <HeaderListaTarefa />
-    <section>
+    <section id="lista-tarefa-body">
       <ItemListaTarefa :key="tarefa.id" v-for="(tarefa, i) in tarefas" v-model:tarefa="tarefas[i]"/>
     </section>
+    <FooterListaTarefa @on-confirm-creation="() => console.log('Tarefa criada!')"/>
   </section>
 </template>
