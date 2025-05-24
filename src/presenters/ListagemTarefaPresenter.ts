@@ -2,24 +2,36 @@ import api from "@/connectors/api";
 import type ListagemTarefasView from "./interfaces/ListagemTarefasView";
 import type { Axios } from "axios";
 import type { TarefaViewModel } from "./interfaces/ListagemTarefasView";
+import { StatusTarefaEnum } from "@/domain/tarefa/StatusTarefaEnum";
 
 export default class ListagemTarefaPresenter {
   private readonly api: Axios;
+  private view?: ListagemTarefasView;
 
-  constructor(private readonly view: ListagemTarefasView) {
+  constructor(
+    private readonly projetoId: string,
+  ) {
     this.api = api;
   }
 
-  public async onLoad(projetoId: string): Promise<void> {
+  public setView(view: ListagemTarefasView) {
+    this.view = view;
+  }
+
+  public async onLoad(): Promise<void> {
+    if (!this.view) return;
+
     this.view.enableLoading();
 
     try {
-      const { data: { data }} = await this.api.get(`/projetos/${projetoId}/tarefas`);
+      const { data: { data }} = await this.api.get(`/projetos/${this.projetoId}/tarefas`);
 
-      this.view.setTarefasList(data.map((tarefa) => ({
+      this.view.setTarefasList(data.map((tarefa: any) => ({
         id: tarefa.id,
         descricao: tarefa.descricao,
-        status: tarefa.dataFim ? 'concluido' : (tarefa.dataInicio ? 'em-andamento' : 'pendente'),
+        status: tarefa.dataFim
+          ? StatusTarefaEnum.Concluido
+          : (tarefa.dataInicio ? StatusTarefaEnum.EmAndamento : StatusTarefaEnum.Pendente),
         criador: tarefa.criador,
         dataCriacao: '',
         dataInicio: null,
