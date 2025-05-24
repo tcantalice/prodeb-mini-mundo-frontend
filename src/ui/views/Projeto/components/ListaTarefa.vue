@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import type ListagemTarefaPresenter from '@/presenters/ListagemTarefaPresenter';
 import HeaderListaTarefa from './HeaderListaTarefa.vue';
 import ItemListaTarefa from './ItemListaTarefa.vue';
 import { onMounted, ref } from 'vue';
 import type { TarefaViewModel } from '@/presenters/interfaces/ListagemTarefasView';
-import type ListagemTarefasView from '@/presenters/interfaces/ListagemTarefasView';
 import FooterListaTarefa from './FooterListaTarefa.vue';
+import ListaTarefaController from '../controllers/ListaTarefaController';
 
-const props = defineProps<{ presenter: ListagemTarefaPresenter }>();
-const presenter: ListagemTarefaPresenter = props.presenter;
+const props = defineProps<{ controller: ListaTarefaController }>();
+const controller: ListaTarefaController = props.controller;
 
 const tarefas = ref<any>([]);
 
-const listaTarefaView: ListagemTarefasView = {
+controller.setView({
   disableLoading: () => {},
   enableLoading: () => {},
   setTarefasList: (list: TarefaViewModel[]) => {
@@ -26,13 +25,12 @@ const listaTarefaView: ListagemTarefasView = {
       });
     });
   },
-};
-
-presenter.setView(listaTarefaView);
-
+  showError: (message: string) => {},
+  showSuccess: (message: string) => {},
+});
 
 onMounted(async () => {
-  presenter.onLoad();
+  await controller.onLoad();
 });
 </script>
 
@@ -42,6 +40,7 @@ onMounted(async () => {
     <section id="lista-tarefa-body">
       <ItemListaTarefa :key="tarefa.id" v-for="(tarefa, i) in tarefas" v-model:tarefa="tarefas[i]"/>
     </section>
-    <FooterListaTarefa @on-confirm-creation="() => console.log('Tarefa criada!')"/>
+    <FooterListaTarefa
+      @on-confirm-creation="(descricao: string) => controller.cadastrar(descricao)"/>
   </section>
 </template>
