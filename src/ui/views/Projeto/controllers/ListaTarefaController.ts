@@ -10,8 +10,6 @@ export default class ListaTarefaController {
   public constructor(projetoId: string) {
     this.cadastroPresenter = new CadastrarTarefaPresenter(projetoId);
     this.listagemPresenter = new ListagemTarefaPresenter(projetoId);
-
-    console.log(this.cadastroPresenter);
   }
 
   public setView(view: CadastrarTarefaView & ListagemTarefasView) {
@@ -20,8 +18,6 @@ export default class ListaTarefaController {
   }
 
   public async cadastrar(descricao: string) {
-    console.log(this.cadastroPresenter);
-
     await this.cadastroPresenter.cadastrar({
       descricao,
     });
