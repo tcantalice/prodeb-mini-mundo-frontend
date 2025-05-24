@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 defineEmits(['onConfirmCreation']);
 
@@ -34,8 +36,11 @@ const onLeaveDescricaoField = () => {
     </div>
     <div
       @click="() => isCreating = true"
-      class="bg-gray-100 hover:bg-gray-200 cursor-pointer p-2 rounded-b-md border border-gray-200">
-      <span class="font-bold">Adicionar +</span>
+      class="bg-gray-100 hover:bg-gray-200 cursor-pointer p-2 rounded-b-md border-t border-t-gray-200">
+      <FontAwesomeIcon :icon="faPlus" class="w-5"/>
+      <span class="font-medium">
+        Adicionar
+      </span>
     </div>
   </section>
 </template>
