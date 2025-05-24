@@ -1,7 +1,9 @@
+import type { StatusTarefaEnum } from "@/domain/tarefa/StatusTarefaEnum";
+
 export interface TarefaViewModel {
   id: string;
   descricao: string;
-  status: 'pendente' | 'em-andamento' | 'concluido';
+  status: StatusTarefaEnum;
   dataInicio: string | null;
   dateFim: string | null;
   criador: string;
@@ -14,6 +16,4 @@ export default interface ListagemTarefasView {
   disableLoading(): void;
 
   setTarefasList(list: TarefaViewModel[]): void;
-
-  showError(message: string): void;
 }
