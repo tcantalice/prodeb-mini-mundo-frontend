@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen">
+  <div class="w-screen h-screen">
     <header class="bg-indigo-600 text-white p-4 flex justify-between items-center">
       <h1 class="text-xl font-semibold">Painel do Sistema</h1>
       <button @click="logout" class="bg-indigo-800 px-3 py-1 rounded hover:bg-indigo-700">
@@ -7,7 +7,7 @@
       </button>
     </header>
 
-    <main class="flex-1 bg-gray-50">
+    <main class="flex-1 bg-gray-50 h-full">
       <router-view />
     </main>
   </div>
