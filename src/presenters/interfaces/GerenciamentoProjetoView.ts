@@ -1,4 +1,4 @@
-export interface UpdateProjetoData {
+export interface UpdateProjetoInput {
   nome: string;
   descricao: string | null;
   orcamento: number | null;
@@ -23,13 +23,7 @@ export default interface GerenciamentoProjetoView {
 
   disableLoading(): void;
 
-  showSuccess(message: string): void;
+  showValidationError(field: string, message: string): void;
 
-  showError(message: string): void;
-
-  showWarning(message: string): void;
-
-  showFieldError(field: string, message: string): void;
-
-  fillFields(projeto: ProjetoViewModel): void;
+  bindProjeto(projeto: ProjetoViewModel): void;
 }
