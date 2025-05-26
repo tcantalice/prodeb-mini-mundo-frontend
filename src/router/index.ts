@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/ui/stores/auth';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 const router = createRouter({
@@ -7,7 +7,7 @@ const router = createRouter({
   routes: [
     {
       path: '/login',
-      component: () => import('../views/LoginView.vue'),
+      component: () => import('../ui/views/LoginView.vue'),
     },
     {
       path: '/',
@@ -19,23 +19,23 @@ const router = createRouter({
         {
           path: '/projetos',
           name: 'listar-projetos',
-          component: () => import('../views/ListarProjetosView.vue'),
+          component: () => import('../ui/views/ListarProjetosView.vue'),
         },
         {
           path: '/projetos/novo',
           name: 'criar-projeto',
-          component: () => import('../views/CriarProjetoView.vue'),
+          component: () => import('../ui/views/CriarProjetoView.vue'),
         },
         {
           path: '/projetos/:id',
           name: 'visualizar-projeto',
-          component: () => import('../views/ProjetoView.vue'),
+          component: () => import('../ui/views/Projeto/ProjetoView.vue'),
           props: true,
         },
         {
           path: '/projetos/:id/editar',
           name: 'editar-projeto',
-          component: () => import('../views/EditarProjetoView.vue'),
+          component: () => import('../ui/views/EditarProjeto/EditarProjetoView.vue'),
           props: true,
         }
       ]

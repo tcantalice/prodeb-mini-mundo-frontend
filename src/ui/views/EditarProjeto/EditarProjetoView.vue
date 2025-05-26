@@ -1,75 +1,48 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api from '@/connectors/api';
-import type Projeto from '@/models/projeto';
+import { useRoute } from 'vue-router';
+import GerenciamentoProjetoPresenter from '@/presenters/GerenciamentoProjetoPresenter';
+import type GerenciamentoProjetoView from '@/presenters/interfaces/GerenciamentoProjetoView';
+import type { ProjetoViewModel } from '@/presenters/interfaces/GerenciamentoProjetoView';
 
 const route = useRoute();
-const router = useRouter();
 
-const projeto = ref<Projeto>();
 const nome = ref('');
-const descricao = ref('');
+const descricao = ref<string | null>('');
 const orcamento = ref<number | null>(null);
-const ativo = ref(true);
+const ativo = ref<boolean>(false);
 const erro = ref<string | null>(null);
 const carregando = ref(false);
 
+
+const view: GerenciamentoProjetoView = {
+  enableLoading: () => carregando.value = true,
+  disableLoading: () => carregando.value = false,
+  showError: (message: string) => erro.value = message,
+  showSuccess: (message: string) => console.log(message),
+  showFieldError: (field: string, message: string) => {},
+  showWarning: (message: string) => console.log(message),
+  fillFields: (model: ProjetoViewModel) => {
+    nome.value = model.nome;
+    descricao.value = model.descricao;
+    ativo.value = model.ativo;
+    orcamento.value = model.orcamento;
+  }
+};
+
+const presenter: GerenciamentoProjetoPresenter = new GerenciamentoProjetoPresenter(view);
+
 onMounted(async () => {
-  carregando.value = true;
-
-  const projetoDoState = window.history.state?.projeto;
-
-  if (projetoDoState) {
-    projeto.value = projetoDoState;
-  } else {
-    const id = route.params.id;
-    const { data: { data }} = await api.get(`/projetos/${id}`);
-    projeto.value = {
-      id: data.id,
-      nome: data.nome,
-      descricao: data.descricao || null,
-      orcamento: data.orcamento !== null ? Number(data.orcamento) : null,
-      ativo: data.ativo,
-      criadoEm: new Date(data.criado_em),
-      criadoPor: data.criado_por.nome
-    } as Projeto;
-  }
-
-  if (projeto.value) {
-    nome.value = projeto.value.nome;
-    descricao.value = projeto.value.descricao || '';
-    orcamento.value = projeto.value.orcamento ?? null;
-    ativo.value = projeto.value.ativo ?? true;
-  }
-
-  carregando.value = false;
+  await presenter.onLoad(route.params.id as string);
 });
 
 const salvarProjeto = async () => {
-  erro.value = null;
-  carregando.value = true;
-
-  try {
-    const payload = {
-      nome: nome.value,
-      descricao: descricao.value || projeto.value!.descricao,
-      orcamento: orcamento.value !== null ? Number(orcamento.value) : projeto.value!.orcamento,
-      ativo: ativo.value
-    };
-
-    const response = await api.put(`/projetos/${route.params.id}`, payload);
-
-    if (response.status === 200) {
-      router.back();
-    } else {
-      erro.value = 'Erro ao atualizar projeto.';
-    }
-  } catch (e) {
-    erro.value = 'Erro na comunicação com o servidor.';
-  } finally {
-    carregando.value = false;
-  }
+  presenter.editarProjeto(route.params.id as string, {
+    nome: nome.value,
+    descricao: descricao.value,
+    orcamento: orcamento.value !== null ? Number(orcamento.value) : null,
+    ativo: ativo.value
+  });
 };
 </script>
 
