@@ -1,12 +1,4 @@
-import type { StatusTarefaEnum } from "@/domain/tarefa/StatusTarefaEnum";
-
-export interface TarefaViewModel {
-  id: string;
-  descricao: string;
-  status: StatusTarefaEnum;
-  dataInicio: string | null;
-  dataFim: string | null;
-}
+import type TarefaViewModel from "../models/TarefaViewModel";
 
 export default interface GerenciamentoTarefaView {
   updateTarefa(tarefa: TarefaViewModel): void;
@@ -15,7 +7,7 @@ export default interface GerenciamentoTarefaView {
 
   showError(error: string): void;
 
-  enableLoading(): void;
+  showLoading(): void;
 
-  disableLoading(): void;
+  hideLoading(): void;
 }
