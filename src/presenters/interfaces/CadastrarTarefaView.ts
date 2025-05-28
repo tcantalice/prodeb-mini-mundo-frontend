@@ -1,9 +1,9 @@
 export default interface CadastrarTarefaView {
-  showError(message: string): void;
+  showError(error: string): void;
 
   showSuccess(message: string): void;
 
-  enableLoading(): void;
+  showLoading(): void;
 
-  disableLoading(): void;
+  hideLoading(): void;
 }
