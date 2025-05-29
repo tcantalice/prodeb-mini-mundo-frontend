@@ -2,7 +2,7 @@
 import { StatusTarefaEnum } from '@/domain/tarefa/StatusTarefaEnum';
 import { defineModel } from 'vue';
 
-type Tarefa = {
+export type ItemTarefaViewModel = {
   id: string,
   descricao: string,
   dataInicio: string | null,
@@ -10,7 +10,7 @@ type Tarefa = {
   status: StatusTarefaEnum,
 };
 
-const tarefa = defineModel<Tarefa>('tarefa', { required: true });
+const tarefa = defineModel<ItemTarefaViewModel>('tarefa', { required: true });
 
 const resolveStatusStyle = (status: StatusTarefaEnum) => {
   return ({
