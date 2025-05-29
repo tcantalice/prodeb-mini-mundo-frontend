@@ -3,6 +3,7 @@ import type { Axios } from "axios";
 import { StatusTarefaEnum } from "@/domain/tarefa/StatusTarefaEnum";
 import type TarefaViewModel from "./models/TarefaViewModel";
 import type ListagemTarefaView from "./interfaces/ListagemTarefaView";
+import { formatDateTime } from "@/utils/datetime";
 
 export default class ListagemTarefaPresenter {
   private readonly api: Axios;
@@ -35,13 +36,13 @@ export default class ListagemTarefaPresenter {
       this.view.setTarefas(data.map((tarefa: any) => ({
         id: tarefa.id,
         descricao: tarefa.descricao,
-        status: tarefa.dataFim
+        status: tarefa.finalizada_em
           ? StatusTarefaEnum.Concluido
-          : (tarefa.dataInicio ? StatusTarefaEnum.EmAndamento : StatusTarefaEnum.Pendente),
-        criadoPor: tarefa.criador,
+          : (tarefa.iniciada_em ? StatusTarefaEnum.EmAndamento : StatusTarefaEnum.Pendente),
+        criadoPor: '',
         criadoEm: '',
-        dataInicio: null,
-        dataFim: null,
+        dataInicio: tarefa.iniciada_em && formatDateTime(tarefa.iniciada_em),
+        dataFim: tarefa.finalizada_em && formatDateTime(tarefa.finalizada_em),
       }) as TarefaViewModel) as TarefaViewModel[]);
     } catch(e) {
       console.error('Ocorreu um erro ao tentar obter as tarefas do projeto', e);

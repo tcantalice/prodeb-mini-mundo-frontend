@@ -26,11 +26,11 @@ export default class GerenciamentoTarefaPresenter {
       this.view.updateTarefa({
         id: data.id,
         descricao: data.descricao,
-        status: data.dataFim
+        status: data.finalizada_em
           ? StatusTarefaEnum.Concluido
-          : (data.dataInicio ? StatusTarefaEnum.EmAndamento : StatusTarefaEnum.Pendente),
-        dataFim: data.dataFim,
-        dataInicio: data.dataInicio,
+          : (data.iniciada_em ? StatusTarefaEnum.EmAndamento : StatusTarefaEnum.Pendente),
+        dataFim: data.finalizada_em,
+        dataInicio: data.iniciada_em,
         criadoEm: '',
         criadoPor: ''
       });
