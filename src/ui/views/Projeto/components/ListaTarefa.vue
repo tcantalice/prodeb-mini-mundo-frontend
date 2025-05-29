@@ -1,15 +1,18 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+
+import type TarefaViewModel from '@/presenters/models/TarefaViewModel';
+
+import ListaTarefaController from '../controllers/ListaTarefaController';
+import FooterListaTarefa from './FooterListaTarefa.vue';
 import HeaderListaTarefa from './HeaderListaTarefa.vue';
 import ItemListaTarefa from './ItemListaTarefa.vue';
-import { onMounted, ref } from 'vue';
-import type { TarefaViewModel } from '@/presenters/interfaces/ListagemTarefasView';
-import FooterListaTarefa from './FooterListaTarefa.vue';
-import ListaTarefaController from '../controllers/ListaTarefaController';
+
 
 const props = defineProps<{ controller: ListaTarefaController }>();
 const controller: ListaTarefaController = props.controller;
 
-const tarefas = ref<any>([]);
+const tarefas = ref<Record<string, TarefaViewModel>>({});
 
 controller.setView({
   disableLoading: () => {},
