@@ -14,22 +14,11 @@ const controller: ListaTarefaController = props.controller;
 
 const tarefas = ref<Record<string, TarefaViewModel>>({});
 
-controller.setView({
-  disableLoading: () => {},
-  enableLoading: () => {},
-  setTarefasList: (list: TarefaViewModel[]) => {
-    tarefas.value = list.map((tarefa: TarefaViewModel) =>{
-      return ({
-        id: tarefa.id,
-        descricao: tarefa.descricao,
-        status: tarefa.status,
-        dataInicio: tarefa.dataInicio,
-        dataFim: tarefa.dateFim
-      });
-    });
-  },
-  showError: (message: string) => {},
-  showSuccess: (message: string) => {},
+controller.bindCreateView({
+  hideLoading() {},
+  showError(error: string) {},
+  showLoading() {},
+  showSuccess(message: string) {}
 });
 
 onMounted(async () => {
