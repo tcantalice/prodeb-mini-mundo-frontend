@@ -62,7 +62,8 @@ onMounted(async () => {
         v-for="(tarefa, i) in tarefas"
         :key="tarefa.id"
         :atualizando="tarefa.atualizando"
-        v-model:tarefa="tarefas[i]"/>
+        v-model:tarefa="tarefas[i]"
+        @click:status="(idTarefa: string) => controller.alterarStatus(idTarefa)"/>
     </section>
     <FooterListaTarefa
       @on-confirm-creation="(descricao: string) => controller.cadastrar(descricao)"/>
