@@ -14,14 +14,22 @@ export default class CadastrarTarefaPresenter {
     this.api = api;
   }
 
+  /**
+   *
+   * @deprecated
+   */
   public setView(view: CadastrarTarefaView) {
+    this.bindView(view);
+  }
+
+  public bindView(view: CadastrarTarefaView) {
     this.view = view;
   }
 
   public async cadastrar(input: CadastrarTarefaInput) {
     if (!this.view) return;
 
-    this.view.enableLoading();
+    this.view.showLoading();
 
     try {
       const response = await this.api.post(`/projetos/${this.projetoId}/tarefas`, {
@@ -35,7 +43,7 @@ export default class CadastrarTarefaPresenter {
       console.error(e);
       this.view.showError('Ocorreu uma falha ao cadastrar a tarefa!');
     } finally {
-      this.view.disableLoading();
+      this.view.hideLoading();
     }
   }
 }

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { StatusTarefaEnum } from '@/domain/tarefa/StatusTarefaEnum';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { defineModel } from 'vue';
 
-type Tarefa = {
+export type ItemTarefaViewModel = {
   id: string,
   descricao: string,
   dataInicio: string | null,
@@ -10,7 +12,9 @@ type Tarefa = {
   status: StatusTarefaEnum,
 };
 
-const tarefa = defineModel<Tarefa>('tarefa', { required: true });
+const emit = defineEmits(['click:status']);
+const props = defineProps<{ atualizando: boolean }>();
+const tarefa = defineModel<ItemTarefaViewModel>('tarefa', { required: true });
 
 const resolveStatusStyle = (status: StatusTarefaEnum) => {
   return ({
@@ -19,6 +23,8 @@ const resolveStatusStyle = (status: StatusTarefaEnum) => {
     [StatusTarefaEnum.Pendente]: ['bg-gray-300', 'text-netral-600']
   } as { [status in StatusTarefaEnum]: string[] })[status];
 };
+
+const onClickStatus = () => !props.atualizando && emit('click:status', tarefa.value.id);
 </script>
 
 <template>
@@ -27,8 +33,12 @@ const resolveStatusStyle = (status: StatusTarefaEnum) => {
     <div class="flex-3 p-2 truncate">
       <span class="text-neutral-700">{{ tarefa.descricao }}</span>
     </div>
-    <div class="text-center flex-1 p-2" :class="resolveStatusStyle(tarefa.status)">
-      <span>{{ tarefa.status }}</span>
+    <div
+      class="text-center flex-1 p-2"
+      :class="[...resolveStatusStyle(tarefa.status), !atualizando ? 'cursor-pointer' : 'cursor-default']"
+      @click="onClickStatus">
+      <FontAwesomeIcon :icon="faCircleNotch" class="fa-spin" v-if="atualizando" />
+      <span v-else>{{ tarefa.status }}</span>
     </div>
     <div class="text-center flex-1 p-2">
       <span class="text-neutral-700">{{ tarefa.dataInicio }}</span>

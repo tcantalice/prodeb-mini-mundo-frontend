@@ -1,32 +1,57 @@
 <script setup lang="ts">
-import HeaderListaTarefa from './HeaderListaTarefa.vue';
-import ItemListaTarefa from './ItemListaTarefa.vue';
 import { onMounted, ref } from 'vue';
-import type { TarefaViewModel } from '@/presenters/interfaces/ListagemTarefasView';
-import FooterListaTarefa from './FooterListaTarefa.vue';
+
+import type TarefaViewModel from '@/presenters/models/TarefaViewModel';
+
 import ListaTarefaController from '../controllers/ListaTarefaController';
+import FooterListaTarefa from './FooterListaTarefa.vue';
+import HeaderListaTarefa from './HeaderListaTarefa.vue';
+import ItemListaTarefa, { type ItemTarefaViewModel} from './ItemListaTarefa.vue';
+import { transformVNodeArgs } from 'vue';
 
 const props = defineProps<{ controller: ListaTarefaController }>();
 const controller: ListaTarefaController = props.controller;
 
-const tarefas = ref<any>([]);
+const tarefas = ref<Record<string, ItemTarefaViewModel & { atualizando: boolean }>>({});
 
-controller.setView({
-  disableLoading: () => {},
-  enableLoading: () => {},
-  setTarefasList: (list: TarefaViewModel[]) => {
-    tarefas.value = list.map((tarefa: TarefaViewModel) =>{
-      return ({
-        id: tarefa.id,
-        descricao: tarefa.descricao,
-        status: tarefa.status,
-        dataInicio: tarefa.dataInicio,
-        dataFim: tarefa.dateFim
-      });
-    });
+controller.bindCreateView({
+  hideLoading() {},
+  showError(error: string) {},
+  showLoading() {},
+  showSuccess(message: string) {}
+});
+
+controller.bindListView({
+  hideLoading() {},
+  showLoading() {},
+  setTarefas(list: TarefaViewModel[]) {
+    tarefas.value = list.reduce((crr, tarefa: TarefaViewModel) => {
+      crr[tarefa.id] = {...tarefa, atualizando: false };
+
+      return crr;
+    }, {} as (typeof tarefas.value));
+  }
+});
+
+controller.bindManageView({
+  hideLoading(idTarefa: string) {
+    tarefas.value[idTarefa].atualizando = false;
   },
-  showError: (message: string) => {},
-  showSuccess: (message: string) => {},
+  showLoading(idTarefa: string) {
+    tarefas.value[idTarefa].atualizando = true;
+  },
+  showError(error: string) {},
+  showSuccess(message: string) {},
+  updateTarefa(tarefa: TarefaViewModel) {
+    const buffTarefas = tarefas.value;
+
+    buffTarefas[tarefa.id] = {
+      ...tarefa,
+      atualizando: tarefas.value[tarefa.id].atualizando
+    };
+
+    tarefas.value = buffTarefas;
+  }
 });
 
 onMounted(async () => {
@@ -38,7 +63,12 @@ onMounted(async () => {
   <section>
     <HeaderListaTarefa />
     <section id="lista-tarefa-body">
-      <ItemListaTarefa :key="tarefa.id" v-for="(tarefa, i) in tarefas" v-model:tarefa="tarefas[i]"/>
+      <ItemListaTarefa
+        v-for="(tarefa, i) in tarefas"
+        :key="tarefa.id"
+        :atualizando="tarefa.atualizando"
+        v-model:tarefa="tarefas[i]"
+        @click:status="(idTarefa: string) => controller.alterarStatus(idTarefa)"/>
     </section>
     <FooterListaTarefa
       @on-confirm-creation="(descricao: string) => controller.cadastrar(descricao)"/>

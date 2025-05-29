@@ -1,46 +1,53 @@
 import api from "@/connectors/api";
-import type ListagemTarefasView from "./interfaces/ListagemTarefasView";
 import type { Axios } from "axios";
-import type { TarefaViewModel } from "./interfaces/ListagemTarefasView";
 import { StatusTarefaEnum } from "@/domain/tarefa/StatusTarefaEnum";
+import type TarefaViewModel from "./models/TarefaViewModel";
+import type ListagemTarefaView from "./interfaces/ListagemTarefaView";
+import { formatDateTime } from "@/utils/datetime";
 
 export default class ListagemTarefaPresenter {
   private readonly api: Axios;
-  private view?: ListagemTarefasView;
+  private view!: ListagemTarefaView;
 
-  constructor(
-    private readonly projetoId: string,
-  ) {
+  constructor(private readonly projetoId: string) {
     this.api = api;
   }
 
-  public setView(view: ListagemTarefasView) {
+  /**
+   *
+   * @deprecated
+   */
+  public setView(view: ListagemTarefaView) {
+    this.bindView(view);
+  }
+
+  public bindView(view: ListagemTarefaView) {
     this.view = view;
   }
 
   public async onLoad(): Promise<void> {
     if (!this.view) return;
 
-    this.view.enableLoading();
+    this.view.showLoading();
 
     try {
       const { data: { data }} = await this.api.get(`/projetos/${this.projetoId}/tarefas`);
 
-      this.view.setTarefasList(data.map((tarefa: any) => ({
+      this.view.setTarefas(data.map((tarefa: any) => ({
         id: tarefa.id,
         descricao: tarefa.descricao,
-        status: tarefa.dataFim
+        status: tarefa.finalizada_em
           ? StatusTarefaEnum.Concluido
-          : (tarefa.dataInicio ? StatusTarefaEnum.EmAndamento : StatusTarefaEnum.Pendente),
-        criador: tarefa.criador,
-        dataCriacao: '',
-        dataInicio: null,
-        dateFim: null,
+          : (tarefa.iniciada_em ? StatusTarefaEnum.EmAndamento : StatusTarefaEnum.Pendente),
+        criadoPor: '',
+        criadoEm: '',
+        dataInicio: tarefa.iniciada_em && formatDateTime(tarefa.iniciada_em),
+        dataFim: tarefa.finalizada_em && formatDateTime(tarefa.finalizada_em),
       }) as TarefaViewModel) as TarefaViewModel[]);
     } catch(e) {
-      this.view.showError('Projeto não encontrado');
+      console.error('Ocorreu um erro ao tentar obter as tarefas do projeto', e);
     } finally {
-      this.view.disableLoading();
+      this.view.hideLoading();
     }
   }
 }
