@@ -6,13 +6,12 @@ import type TarefaViewModel from '@/presenters/models/TarefaViewModel';
 import ListaTarefaController from '../controllers/ListaTarefaController';
 import FooterListaTarefa from './FooterListaTarefa.vue';
 import HeaderListaTarefa from './HeaderListaTarefa.vue';
-import ItemListaTarefa from './ItemListaTarefa.vue';
-
+import ItemListaTarefa, { type ItemTarefaViewModel} from './ItemListaTarefa.vue';
 
 const props = defineProps<{ controller: ListaTarefaController }>();
 const controller: ListaTarefaController = props.controller;
 
-const tarefas = ref<Record<string, TarefaViewModel>>({});
+const tarefas = ref<Record<string, ItemTarefaViewModel & { atualizando: boolean }>>({});
 
 controller.bindCreateView({
   hideLoading() {},
@@ -26,10 +25,23 @@ controller.bindListView({
   showLoading() {},
   setTarefas(list: TarefaViewModel[]) {
     tarefas.value = list.reduce((crr, tarefa: TarefaViewModel) => {
-      crr[tarefa.id] = tarefa;
+      crr[tarefa.id] = {...tarefa, atualizando: false };
 
       return crr;
     }, {} as (typeof tarefas.value));
+  }
+});
+
+controller.bindManageView({
+  hideLoading(idTarefa: string) {},
+  showLoading(idTarefa: string) {},
+  showError(error: string) {},
+  showSuccess(message: string) {},
+  updateTarefa(tarefa: TarefaViewModel) {
+    tarefas.value[tarefa.id] = {
+      ...tarefa,
+      atualizando: tarefas.value[tarefa.id].atualizando
+    };
   }
 });
 
