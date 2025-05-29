@@ -12,8 +12,7 @@ export type ItemTarefaViewModel = {
   status: StatusTarefaEnum,
 };
 
-defineEmits(['click:status']);
-
+const emit = defineEmits(['click:status']);
 const props = defineProps<{ atualizando: boolean }>();
 const tarefa = defineModel<ItemTarefaViewModel>('tarefa', { required: true });
 
@@ -24,6 +23,8 @@ const resolveStatusStyle = (status: StatusTarefaEnum) => {
     [StatusTarefaEnum.Pendente]: ['bg-gray-300', 'text-netral-600']
   } as { [status in StatusTarefaEnum]: string[] })[status];
 };
+
+const onClickStatus = () => !props.atualizando && emit('click:status', tarefa.value.id);
 </script>
 
 <template>
@@ -35,7 +36,7 @@ const resolveStatusStyle = (status: StatusTarefaEnum) => {
     <div
       class="text-center flex-1 p-2"
       :class="[...resolveStatusStyle(tarefa.status), !atualizando ? 'cursor-pointer' : 'cursor-default']"
-      @click="() => !atualizando && $emit('click:status', tarefa.id)">
+      @click="onClickStatus">
       <FontAwesomeIcon :icon="faCircleNotch" class="fa-spin" v-if="atualizando" />
       <span v-else>{{ tarefa.status }}</span>
     </div>
