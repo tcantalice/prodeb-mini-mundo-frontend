@@ -54,7 +54,11 @@ onMounted(async () => {
   <section>
     <HeaderListaTarefa />
     <section id="lista-tarefa-body">
-      <ItemListaTarefa :key="tarefa.id" v-for="(tarefa, i) in tarefas" v-model:tarefa="tarefas[i]"/>
+      <ItemListaTarefa
+        v-for="(tarefa, i) in tarefas"
+        :key="tarefa.id"
+        :atualizando="tarefa.atualizando"
+        v-model:tarefa="tarefas[i]"/>
     </section>
     <FooterListaTarefa
       @on-confirm-creation="(descricao: string) => controller.cadastrar(descricao)"/>
