@@ -33,8 +33,12 @@ controller.bindListView({
 });
 
 controller.bindManageView({
-  hideLoading(idTarefa: string) {},
-  showLoading(idTarefa: string) {},
+  hideLoading(idTarefa: string) {
+    tarefas.value[idTarefa].atualizando = false;
+  },
+  showLoading(idTarefa: string) {
+    tarefas.value[idTarefa].atualizando = true;
+  },
   showError(error: string) {},
   showSuccess(message: string) {},
   updateTarefa(tarefa: TarefaViewModel) {
