@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { StatusTarefaEnum } from '@/domain/tarefa/StatusTarefaEnum';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { defineModel } from 'vue';
 
 export type ItemTarefaViewModel = {
@@ -10,6 +12,9 @@ export type ItemTarefaViewModel = {
   status: StatusTarefaEnum,
 };
 
+const props = defineProps<{
+  atualizando: boolean
+}>();
 const tarefa = defineModel<ItemTarefaViewModel>('tarefa', { required: true });
 
 const resolveStatusStyle = (status: StatusTarefaEnum) => {
@@ -28,7 +33,8 @@ const resolveStatusStyle = (status: StatusTarefaEnum) => {
       <span class="text-neutral-700">{{ tarefa.descricao }}</span>
     </div>
     <div class="text-center flex-1 p-2" :class="resolveStatusStyle(tarefa.status)">
-      <span>{{ tarefa.status }}</span>
+      <FontAwesomeIcon :icon="faCircleNotch" class="fa-spin" v-if="atualizando" />
+      <span v-else>{{ tarefa.status }}</span>
     </div>
     <div class="text-center flex-1 p-2">
       <span class="text-neutral-700">{{ tarefa.dataInicio }}</span>
