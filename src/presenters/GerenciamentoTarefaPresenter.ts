@@ -21,7 +21,7 @@ export default class GerenciamentoTarefaPresenter {
     this.view.showLoading(idTarefa);
 
     try {
-      const { data: { data } } = await this.api.patch(`/tarefas/${id}/status`);
+      const { data: { data } } = await this.api.patch(`/tarefas/${idTarefa}/status`);
 
       this.view.updateTarefa({
         id: data.id,
