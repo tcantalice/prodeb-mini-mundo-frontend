@@ -21,6 +21,18 @@ controller.bindCreateView({
   showSuccess(message: string) {}
 });
 
+controller.bindListView({
+  hideLoading() {},
+  showLoading() {},
+  setTarefas(list: TarefaViewModel[]) {
+    tarefas.value = list.reduce((crr, tarefa: TarefaViewModel) => {
+      crr[tarefa.id] = tarefa;
+
+      return crr;
+    }, {} as (typeof tarefas.value));
+  }
+});
+
 onMounted(async () => {
   await controller.onLoad();
 });
