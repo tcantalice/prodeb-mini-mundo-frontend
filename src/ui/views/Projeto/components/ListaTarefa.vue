@@ -7,6 +7,7 @@ import ListaTarefaController from '../controllers/ListaTarefaController';
 import FooterListaTarefa from './FooterListaTarefa.vue';
 import HeaderListaTarefa from './HeaderListaTarefa.vue';
 import ItemListaTarefa, { type ItemTarefaViewModel} from './ItemListaTarefa.vue';
+import { transformVNodeArgs } from 'vue';
 
 const props = defineProps<{ controller: ListaTarefaController }>();
 const controller: ListaTarefaController = props.controller;
@@ -42,10 +43,14 @@ controller.bindManageView({
   showError(error: string) {},
   showSuccess(message: string) {},
   updateTarefa(tarefa: TarefaViewModel) {
-    tarefas.value[tarefa.id] = {
+    const buffTarefas = tarefas.value;
+
+    buffTarefas[tarefa.id] = {
       ...tarefa,
       atualizando: tarefas.value[tarefa.id].atualizando
     };
+
+    tarefas.value = buffTarefas;
   }
 });
 
