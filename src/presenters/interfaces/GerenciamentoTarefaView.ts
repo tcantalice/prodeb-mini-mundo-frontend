@@ -7,7 +7,7 @@ export default interface GerenciamentoTarefaView {
 
   showError(error: string): void;
 
-  showLoading(): void;
+  showLoading(idTarefa: string): void;
 
-  hideLoading(): void;
+  hideLoading(idTarefa: string): void;
 }

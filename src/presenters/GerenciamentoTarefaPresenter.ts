@@ -15,10 +15,10 @@ export default class GerenciamentoTarefaPresenter {
     this.view = view;
   }
 
-  public async alterarStatus(id: string): Promise<void> {
+  public async alterarStatus(idTarefa: string): Promise<void> {
     if (!this.view) return;
 
-    this.view.showLoading();
+    this.view.showLoading(idTarefa);
 
     try {
       const { data: { data } } = await this.api.patch(`/tarefas/${id}/status`);
@@ -38,7 +38,7 @@ export default class GerenciamentoTarefaPresenter {
       console.error(e);
       this.view.showError('Ocorreu um erro atualizar o status da tarefa');
     } finally {
-      this.view.hideLoading();
+      this.view.hideLoading(idTarefa);
     }
   }
 }
